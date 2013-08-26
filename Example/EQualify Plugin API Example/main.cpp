@@ -16,8 +16,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	Contact info: leo@equalify.me
-
-	$Id: plugins.h 159 2013-08-25 23:46:14Z zs@dev0.net $
 */
 
 
@@ -49,10 +47,10 @@ bool threadrunning =false;
 
 int AnalyzerMode=1;
 int plugin_main();
-int wx=800;
-int wy=600;
+int wx=800;			//window width
+int wy=600;			//window height
 int wxi=800;
-int barcount=80;
+int barcount=80;	
 
 
 class DXanalyzer : public EQPlugin   

@@ -38,11 +38,11 @@ typedef struct {
 	int			redirects;			// How many alternate uri's for the track
 	int			currplay;			// How many seconds into a song
 	double		vol;				// 0.0 -> 1.0
-	int tracktype;	
+	int 		tracktype;			// local or "spotify"
 } TRACKINFO;
 
 struct s_EQ_functions {
-	int			(*GetTrackInfo)(TRACKINFO *);   // This function sets in motion a large ammount of events, 
+	int			(*GetTrackInfo)(TRACKINFO *);	// This function sets in motion a large ammount of events, 
 												// can take some time but will return all available info about the current playing track
 	void		(*Play_Pause)();
 	void		(*Next_Track)();
@@ -68,9 +68,9 @@ struct s_EQinfo {
 };
 
 struct PluginsInfo {
-	wchar_t name[255];					//Name of plugin, Will also be used as the windowclass and menu name
+	wchar_t name[255];				//Name of plugin, Will also be used as the windowclass and menu name
 	wchar_t desc[1024];				//Not really shown anywhere but the console at the moment
-	wchar_t author[255];				//You!
+	wchar_t author[255];			//You!
 	int type;						//Not in use in this version
 	int ApiVersion;					
 };

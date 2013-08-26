@@ -16,4 +16,8 @@ To get it working you need visual studio (or atleast Visual C++) 2010
 
 It should now compile fine.
 
+
+To use it you have to use the Equalify DLL that is provided in the binary folder.
+Copy that dll to the folders listed here: http://www.equalify.me/?page=path
+
 # more will be added....

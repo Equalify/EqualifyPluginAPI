@@ -106,8 +106,6 @@ extern "C"
 
 // if you want a window this can be your window proc
 LRESULT CALLBACK Default_window_proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
-	static LPARAM lParamMouse;
-
 	switch(Message) {
 
 	case WM_DESTROY: {

@@ -30,17 +30,18 @@ Contact info: leo@equalify.me
 #include "pluginapi.h"
 
 ULONG_PTR gdiplusToken=NULL;
-float *floatOldMag;
+float *floatOldMag;		//previous analyzer values, used to calculate decay, alloced in initialize_plugin, and set in the draw analyzer func,
 
-const s_EQinfo *EQinfo;
-PluginsInfo MyInfo={0};
+const s_EQinfo *EQinfo;  //	will be set by equalify so you can access the data it shares
+PluginsInfo MyInfo={0};  // set by plugin and shared to equalify
+
 bool threadrunning =false;
 
 #define AUTHOR L"Equalify"
 #define PLUGIN_DESC L"EQUALIFY API SKELETON APP"
 #define PLUGIN_NAME L"API SKELETON EXAMPLE"
 
-int AnalyzerMode=1;
+int AnalyzerMode=1;				// 0 =bars at bottom; 1= bars centered
 int plugin_main();
 int Window_width=800;			//window width
 int Window_height=600;			//window height
@@ -74,6 +75,8 @@ public:
 	}
 	virtual void Process_Data ()
 	{
+		//should start a thread here that runs the plugin
+		//should also not allow it to unload while the thread is running
 		if ((!threadrunning)){
 			threadrunning=true;
 			if (CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&plugin_main,NULL,0,NULL) == NULL)
@@ -87,6 +90,7 @@ extern "C"
 {
 	__declspec(dllexport) int API_VERSION ()
 	{
+		//checked on module load
 		return ApiVersionNumber;
 	}
 

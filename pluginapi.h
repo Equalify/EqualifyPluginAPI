@@ -16,8 +16,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	Contact info: leo@equalify.me
-
-	$Id: plugins.h 159 2013-08-25 23:46:14Z zs@dev0.net $
 */
 
 #ifndef INCLUDE_PLUGINS_H

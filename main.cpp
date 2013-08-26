@@ -18,8 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact info: leo@equalify.me
-
-$Id: main.cpp 159 2013-08-25 23:46:14Z zs@dev0.net $
 */
 
 #define _CRT_SECURE_NO_WARNINGS

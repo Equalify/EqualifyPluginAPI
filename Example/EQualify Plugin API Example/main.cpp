@@ -1,21 +1,21 @@
 /*
-	Equalify Plugin API Example
-	Copyright (C) 2013  Kenneth Leonardsen / Equalify.me
+Equalify Plugin API Example
+Copyright (C) 2013  Kenneth Leonardsen / Equalify.me
 
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	
-	Contact info: leo@equalify.me
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Contact info: leo@equalify.me
 */
 
 
@@ -47,11 +47,14 @@ bool threadrunning =false;
 
 int AnalyzerMode=1;
 int plugin_main();
-int wx=800;			//window width
-int wy=600;			//window height
-int wxi=800;
-int barcount=80;	
+int Window_width=800;			//window width
+int Window_height=600;			//window height
 
+// ### bar config
+int Bar_width=0;				//calculated based on width of the window to make sure the bars are evenly spread out
+int barcount=80;				//Should probably not make this larger than the window_width / 2
+float Bar_multiplier = 3.0f;	
+float Bar_decay = 0.03f;
 
 class DXanalyzer : public EQPlugin   
 {
@@ -126,26 +129,26 @@ inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,
 
 	This code is ripped/modified from a 2 year old source file from the Equalify project...
 	*/
-	
+
 	if(fftData == NULL)
 		return;	
 	Gdiplus::Graphics graphics(drawhdc);
 
 	/////vv
-	if(!reverse) height =wy;
-	int gradientheight=wy;
+	if(!reverse) height =Window_height;
+	int gradientheight=Window_height;
 	if(reverse==1)
-		gradientheight=wy;
+		gradientheight=Window_height;
 
- 	Gdiplus::LinearGradientBrush blackBrush(Gdiplus::Point( 0, 0),
- 		Gdiplus::Point( 0,  gradientheight),
- 		Gdiplus::Color(255, 0, 0, 0),   
- 		Gdiplus::Color(255, 255,255, 255)); 
+	Gdiplus::LinearGradientBrush blackBrush(Gdiplus::Point( 0, 0),
+		Gdiplus::Point( 0,  gradientheight),
+		Gdiplus::Color(255, 0, 0, 0),   
+		Gdiplus::Color(255, 255,255, 255)); 
 
 
- 	if(reverse==1) {
- 		blackBrush.SetBlendTriangularShape(.5f, 1.0f);
- 	}
+	if(reverse==1) {
+		blackBrush.SetBlendTriangularShape(.5f, 1.0f);
+	}
 	///////^^
 
 	RECT rect;
@@ -241,8 +244,8 @@ LRESULT CALLBACK analyzerwndproc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
 			SetTimer(hwnd, 6643, 50, NULL );
 			RECT wrect;
 			GetClientRect(hwnd,&wrect);
-			wx=wrect.right;
-			wy=wrect.bottom;
+			Window_width=wrect.right;
+			Window_height=wrect.bottom;
 		}
 		break;
 	case WM_TIMER:
@@ -308,21 +311,13 @@ LRESULT CALLBACK analyzerwndproc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
 	case WM_SIZING: {
 		RECT wrect;
 		GetClientRect(hwnd,&wrect);
-		wx=wrect.right;
-		wy=wrect.bottom;
+		Window_width=wrect.right;
+		Window_height=wrect.bottom;
 
-		if(wxi>1400)
-			barcount=160;
-		else
-			barcount=80;
 
-		wxi = (int)ceil((double)(((float)wx/(float)barcount)));
-		wxi *=barcount;
+		Bar_width = (int)ceil((double)(((float)Window_width/(float)barcount)));
+		Bar_width *=barcount;
 
-		if(wxi>1400)
-			barcount=160;
-		else
-			barcount=80;
 					}
 					break;
 	case WM_PAINT:
@@ -332,13 +327,13 @@ LRESULT CALLBACK analyzerwndproc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
 			{
 				HDC hdcMem = CreateCompatibleDC(ps.hdc);
 				INT ndcMem = SaveDC(hdcMem);
-				HBITMAP hbmMem = CreateCompatibleBitmap(ps.hdc, wx, wy);
+				HBITMAP hbmMem = CreateCompatibleBitmap(ps.hdc, Window_width, Window_height);
 
 				SelectObject(hdcMem, hbmMem);
 				Gdiplus::Graphics graphics(hdcMem);
-				DrawSpectrumLarge(hdcMem, EQinfo->FloatData,(float)barcount,0,5,wy/2,wxi,AnalyzerMode,0.03f,3.0f);
+				DrawSpectrumLarge(hdcMem, EQinfo->FloatData,(float)barcount,0,5,Window_height/2,Bar_width,AnalyzerMode,Bar_decay,Bar_multiplier);
 
-				BitBlt(ps.hdc, 0, 0, wx, wy, hdcMem, 0, 0, SRCCOPY);
+				BitBlt(ps.hdc, 0, 0, Window_width, Window_height, hdcMem, 0, 0, SRCCOPY);
 				graphics.Clear(Gdiplus::Color::Transparent);
 				graphics.ReleaseHDC(hdcMem);
 
@@ -377,9 +372,9 @@ int plugin_main()
 		PLUGIN_NAME,PLUGIN_NAME, WS_OVERLAPPEDWINDOW /*WS_CHILD*/,
 		100,
 		100,
-		wx, wy, NULL, NULL, EQinfo->ghInstance, NULL);
+		Window_width, Window_height, NULL, NULL, EQinfo->ghInstance, NULL);
 
-	SetWindowPos(hwnd,NULL, 100, 100, wx, wy,NULL);
+	SetWindowPos(hwnd,NULL, 100, 100, Window_width, Window_height,NULL);
 	if(hwnd == NULL) {
 		MessageBox(0, L"Window creation failed!", L"Error!", MB_ICONSTOP | MB_OK);
 		return 0;

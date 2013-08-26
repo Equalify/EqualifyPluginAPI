@@ -20,8 +20,9 @@ It should now compile fine.
 To use the plugins you create, you have to use the Equalify DLL that is provided in the binary folder.
 Copy that dll to the folders listed here: http://www.equalify.me/?page=path
 
-
-
 The plugin itself has to be placed in this folder: X:\Users\YOUR_USERNAME\AppData\Roaming\Equalify\plugins
 
-# more will be added....
+You should also start spotify.exe with the -console flag
+(add it to your shortcut "spotify.exe -console")
+
+more will be added....

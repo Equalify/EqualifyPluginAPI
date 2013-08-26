@@ -17,7 +17,11 @@ To get it working you need visual studio (or atleast Visual C++) 2010
 It should now compile fine.
 
 
-To use it you have to use the Equalify DLL that is provided in the binary folder.
+To use the plugins you create, you have to use the Equalify DLL that is provided in the binary folder.
 Copy that dll to the folders listed here: http://www.equalify.me/?page=path
+
+
+
+The plugin itself has to be placed in this folder: X:\Users\YOUR_USERNAME\AppData\Roaming\Equalify\plugins
 
 # more will be added....

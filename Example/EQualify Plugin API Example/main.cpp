@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Contact info: leo@equalify.me
 */
 
-
 // ALL OF THE CODE BELOW IS MESSY, ITS JUST AN EXAMPLE THAT SHOWS HOW TO PLAY WITH THE API...
 
 #define _CRT_SECURE_NO_WARNINGS
@@ -29,7 +28,6 @@ Contact info: leo@equalify.me
 #pragma comment(lib, "gdiplus.lib")
 #include <math.h>
 #include "pluginapi.h"
-
 
 ULONG_PTR gdiplusToken=NULL;
 float *floatOldMag;
@@ -42,9 +40,6 @@ bool threadrunning =false;
 #define PLUGIN_DESC L"EQUALIFY API SKELETON APP"
 #define PLUGIN_NAME L"API SKELETON EXAMPLE"
 
-
-
-
 int AnalyzerMode=1;
 int plugin_main();
 int Window_width=800;			//window width
@@ -53,10 +48,10 @@ int Window_height=600;			//window height
 // ### bar config
 int Bar_width=0;				//calculated based on width of the window to make sure the bars are evenly spread out
 int barcount=80;				//Should probably not make this larger than the window_width / 2
-float Bar_multiplier = 3.0f;	
+float Bar_multiplier = 3.0f;
 float Bar_decay = 0.03f;
 
-class DXanalyzer : public EQPlugin   
+class DXanalyzer : public EQPlugin
 {
 public:
 	virtual int Initialize_plugin(const s_EQinfo *info)
@@ -84,10 +79,8 @@ public:
 			if (CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&plugin_main,NULL,0,NULL) == NULL)
 			{
 			}
-
 		}
 	}
-
 };
 
 extern "C"
@@ -116,14 +109,12 @@ extern "C"
 		//add cleanupcode here
 		delete p_plugin;
 	}
-
 }
-
 
 inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,int y, int height, int width,int reverse,float decay,float multiplier)
 {
 	/*
-	This whole function is a HUHE MESS
+	This whole function is a HUGE MESS
 	i do not remember where i got the idea, and i do not rememeber when it all went wrong...
 	It does show the dancing bars though.. so.. Example plugin for the win!
 
@@ -131,7 +122,7 @@ inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,
 	*/
 
 	if(fftData == NULL)
-		return;	
+		return;
 	Gdiplus::Graphics graphics(drawhdc);
 
 	/////vv
@@ -142,9 +133,8 @@ inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,
 
 	Gdiplus::LinearGradientBrush blackBrush(Gdiplus::Point( 0, 0),
 		Gdiplus::Point( 0,  gradientheight),
-		Gdiplus::Color(255, 0, 0, 0),   
-		Gdiplus::Color(255, 255,255, 255)); 
-
+		Gdiplus::Color(255, 0, 0, 0),
+		Gdiplus::Color(255, 255,255, 255));
 
 	if(reverse==1) {
 		blackBrush.SetBlendTriangularShape(.5f, 1.0f);
@@ -174,12 +164,10 @@ inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,
 			wFs += fftData[a + b];
 		}
 
-
 		wFs = (wFs * (float) log((float)(band + 2)));
 		if (wFs > 1.4f) {
 			wFs =1.4f;
 		}
-
 
 		if (wFs >= (floatOldMag[a] - floatSadFrr)) {
 			floatOldMag[a] = wFs;
@@ -198,7 +186,7 @@ inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,
 			r.top = rect.top + 2;
 
 		r.top += 22;
-		r.bottom = rect.bottom-2;		
+		r.bottom = rect.bottom-2;
 		r2.X=r.left;
 		r2.Width=(r.right-r.left);
 		r2.Y=r.top;
@@ -224,8 +212,6 @@ inline void DrawSpectrumLarge(HDC drawhdc, float* fftData,float specbands,int x,
 			graphics.FillRectangle(&blackBrush,r2);
 			r2.Height=((r.bottom-r.top) + ((r.bottom-r.top)/2))/2;
 			graphics.FillRectangle(&blackBrush,r2);
-
-
 		}
 
 		c += floatBandWidth;
@@ -259,7 +245,7 @@ LRESULT CALLBACK analyzerwndproc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
 
 	case WM_RBUTTONUP: {
 		SetCapture(hwnd);
-		int	xPos = GET_X_LPARAM(lParam); 
+		int	xPos = GET_X_LPARAM(lParam);
 		int	yPos = GET_Y_LPARAM(lParam);
 		HMENU   menu;
 		POINT   pt;
@@ -314,10 +300,8 @@ LRESULT CALLBACK analyzerwndproc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
 		Window_width=wrect.right;
 		Window_height=wrect.bottom;
 
-
 		Bar_width = (int)ceil((double)(((float)Window_width/(float)barcount)));
 		Bar_width *=barcount;
-
 					}
 					break;
 	case WM_PAINT:
@@ -347,8 +331,6 @@ LRESULT CALLBACK analyzerwndproc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
 	}
 	return DefWindowProc(hwnd, Message, wParam, lParam);;
 }
-
-
 
 int plugin_main()
 {
@@ -383,7 +365,6 @@ int plugin_main()
 	ShowWindow(hwnd, 1);
 	SetForegroundWindow(hwnd);
 	UpdateWindow(hwnd);
-
 
 	while(GetMessage(&Msg, NULL, 0, 0)) {
 		TranslateMessage(&Msg);

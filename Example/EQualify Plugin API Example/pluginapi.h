@@ -16,40 +16,105 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Contact info: leo@equalify.me
-
-$Id: plugins.h 159 2013-08-25 23:46:14Z zs@dev0.net $
 */
 
 #ifndef INCLUDE_PLUGINS_H
 #define INCLUDE_PLUGINS_H
-#define ApiVersionNumber 4
+#define ApiVersionNumber 7
 
-typedef struct {
-	char		name[500];			// Track Name
+#define F_NOCHANGE -100
+
+enum FilterNames {
+	LOWPASS,
+	HIPASS,
+	BANDPASS_CSG,
+	BANDPASS_CZPG,
+	NOTCH,
+	ALLPASS,
+	PEAKING,
+	LOWSHELF,
+	HISHELF
+};
+
+//v6
+enum PluginStatus {
+	P_ERR = -1,
+	P_OK = 0x0001,
+	P_RUNNING = 0x0002,
+	P_LOADED = 0x0004,
+	P_UNLOADABLE = 0x0008,
+};
+
+#ifndef TRACKINFO_LOADED
+#define TRACKINFO_LOADED
+struct SpotifyInfo {
+	int			LocApiVersion;
+	char		SpVersion[50];
+	int			Playing;
+	int			Shuffle;
+	int			Repeat;
+	int			Online;
+	int			Running;
+};
+struct TRACKINFO {
+	char		name[500];			//trackname
 	char		URI[500];
-	int			length;				// Track length in sec.
+	int			length;				//sec lenght of track
 	char		artist[20][500];
 	char		artistURI[500];
 	int			coartists;
 	char		album[500];
 	char		albumyear[50];
 	char		albumURI[500];
-	char		redirect[15][50];	// Alternate uri's
-	int			redirects;			// How many alternate uri's for the track
-	int			currplay;			// How many seconds into a song
-	double		vol;				// 0.0 -> 1.0
-	int tracktype;
-} TRACKINFO;
+	char		redirect[15][50];	//not really used much anymore
+	int			redirects;
+	int			currplay;			//sec played
+	double		vol;				//0.0 ->1.0
+	int			tracktype;			//0=normal, 1=local, 3=ad
+	int			IsPrivate;
+	int			IsExplicit;
+	char		Popularity[50];
+	int			TrackNr;
+	SpotifyInfo SpInfo;
+};
+#endif
 
 struct s_EQ_functions {
 	int			(*GetTrackInfo)(TRACKINFO *);   // This function sets in motion a large ammount of events,
-												// can take some time but will return all available info about the current playing track
+	// can take some time but will return all available info about the current playing track
 	void		(*Play_Pause)();
 	void		(*Next_Track)();
 	void		(*Prev_Track)();
 	void		(*Volume_Up)();
 	void		(*Volume_down)();
+	//v5 below
+	int			(*SetFilter)(int band, int FilterType, int freq,float q,double gain,bool QisBW); //added in api 5
+	int			(*Plugin_getFilter)(int band);//added in api 5
+	void		(*PlayURI)(char *URI);
 };
+
+/////////?????????????????????vv
+struct BandInfo{
+	int FilterType;
+	int Freq;
+	float Q;
+	double Gain;
+	bool QisBW;
+};
+
+struct FilterInfo {
+	BandInfo band1;
+	BandInfo band2;
+	BandInfo band3;
+	BandInfo band4;
+	BandInfo band5;
+	BandInfo band6;
+	BandInfo band7;
+	BandInfo band8;
+	BandInfo band9;
+	BandInfo band10;
+};
+/////////?????????????????????^^
 
 struct s_EQinfo {
 	bool EqEnabled;					//Is the eq turned on?
@@ -65,21 +130,26 @@ struct s_EQinfo {
 	HINSTANCE ghInstance;			//Handle to the Spotify instance
 	HWND mHwnd;						//Handle to the Spotify window
 	s_EQ_functions Funcs;			//look above ^^
+	//v5 below
+	FilterInfo EqFilter;
+	bool isAutoLoaded;
 };
 
+//Version 4 of the api (current)
 struct PluginsInfo {
 	wchar_t name[255];				//Name of plugin, Will also be used as the windowclass and menu name
 	wchar_t desc[1024];				//Not really shown anywhere but the console at the moment
 	wchar_t author[255];			//You!
 	int type;						//Not in use in this version
 	int ApiVersion;
+	int status;						//v6
 };
 
 class EQPlugin
 {
 public:
 	virtual const int Get_Unloadable () const = 0;
-	virtual void Process_Data () = 0;							//this should have been named Run_plugin or something, name has not been changed for legacy reasons.
+	virtual void Process_Data () = 0;
 	virtual int Initialize_plugin(const s_EQinfo *info) = 0;
 	virtual const PluginsInfo *PluginData(void) const = 0;
 };
